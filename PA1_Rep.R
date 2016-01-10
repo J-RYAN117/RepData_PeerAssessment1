@@ -33,11 +33,13 @@ plot1<-function(data=data.frame()){
     data<-getData()
   }
   
-  by_day<-group_by(data, date)
-  steps_by_day<-summarise(by_day,totalSteps=sum(steps,na.rm = TRUE))
+  by_day<-group_by(na.omit(data), date)
+  steps_by_day<-summarise(by_day,totalSteps=sum(steps))
   
-  p<-ggplot(data = steps_by_day,aes(x = date, y = totalSteps)) +
-      geom_bar(stat = "identity")
+  p<-ggplot(data = steps_by_day,aes(x = totalSteps)) +
+      geom_histogram(binwidth = 5000)+
+      labs(title = " Total Number of Steps Taken Per Day (NA removed)")+
+      theme(plot.title = element_text(size = rel(2), colour = "blue"))
   print(p)
 }
 
@@ -49,8 +51,8 @@ plot2<-function(data=data.frame()){
     data<-getData()
   }
   
-  by_day<-group_by(data, date)
-  steps_by_day<-summarise(by_day,meanSteps=mean(steps,na.rm = TRUE))
+  by_day<-group_by(na.omit(data), date)
+  steps_by_day<-summarise(by_day,meanSteps=mean(steps))
   
   p<-ggplot(data = steps_by_day,aes(x = date, y = meanSteps)) +
     geom_step()
@@ -65,8 +67,8 @@ plot3<-function(data=data.frame()){
     data<-getData()
   }
   
-  by_day<-group_by(data, date)
-  steps_by_day<-summarise(by_day,medianSteps=median(steps,na.rm = TRUE))
+  by_day<-group_by(na.omit(data), date)
+  steps_by_day<-summarise(by_day,medianSteps=median(steps))
   
   p<-ggplot(data = steps_by_day,aes(x = date, y = medianSteps)) +
     geom_step()

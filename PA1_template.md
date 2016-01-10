@@ -14,29 +14,29 @@ data$date<-as.Date(data$date)
 ```r
   require(dplyr)
   
-  by_day<-group_by(data, date)
-  steps_by_day<-summarise(by_day,totalSteps=sum(steps,na.rm = TRUE))
-  head(steps_by_day,n = 5)
+  by_day<-group_by(na.omit(data), date)
+  steps_by_day<-summarise(by_day,totalSteps=sum(steps))
+  summary(steps_by_day)
 ```
 
 ```
-## Source: local data frame [5 x 2]
-## 
-##         date totalSteps
-##       (date)      (int)
-## 1 2012-10-01          0
-## 2 2012-10-02        126
-## 3 2012-10-03      11352
-## 4 2012-10-04      12116
-## 5 2012-10-05      13294
+##       date              totalSteps   
+##  Min.   :2012-10-02   Min.   :   41  
+##  1st Qu.:2012-10-16   1st Qu.: 8841  
+##  Median :2012-10-29   Median :10765  
+##  Mean   :2012-10-30   Mean   :10766  
+##  3rd Qu.:2012-11-16   3rd Qu.:13294  
+##  Max.   :2012-11-29   Max.   :21194
 ```
 2. Make a histogram of the total number of steps taken each day
 
 ```r
   require(ggplot2)
   
-  p<-ggplot(data = steps_by_day,aes(x = date, y = totalSteps)) +
-      geom_bar(stat = "identity")
+  p<-ggplot(data = steps_by_day,aes(x = totalSteps)) +
+      geom_histogram(binwidth = 5000)+
+      labs(title = " Total Number of Steps Taken Per Day (NA removed)")+
+      theme(plot.title = element_text(colour = "blue"))
   print(p)
 ```
 
@@ -44,40 +44,11 @@ data$date<-as.Date(data$date)
 3. Calculate and report the mean and median of the total number of steps taken per day
 
 ```r
-  by_day<-group_by(data, date)
-  steps_by_day<-summarise(by_day,meanSteps=mean(steps,na.rm = TRUE))
-  head(steps_by_day,n = 5)
+  mean<-mean(steps_by_day$totalSteps)
+  median<-median(steps_by_day$totalSteps)
 ```
-
-```
-## Source: local data frame [5 x 2]
-## 
-##         date meanSteps
-##       (date)     (dbl)
-## 1 2012-10-01       NaN
-## 2 2012-10-02   0.43750
-## 3 2012-10-03  39.41667
-## 4 2012-10-04  42.06944
-## 5 2012-10-05  46.15972
-```
-
-```r
-  steps_by_day<-summarise(by_day,medianSteps=median(steps,na.rm = TRUE))
-  head(steps_by_day,n = 5)
-```
-
-```
-## Source: local data frame [5 x 2]
-## 
-##         date medianSteps
-##       (date)       (dbl)
-## 1 2012-10-01          NA
-## 2 2012-10-02           0
-## 3 2012-10-03           0
-## 4 2012-10-04           0
-## 5 2012-10-05           0
-```
-
+####-mean of the total number of steps taken per day:1.0766189\times 10^{4}
+####-median of the total number of steps taken per day:10765
 
 ## What is the average daily activity pattern?
 1. Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -159,47 +130,21 @@ Dataset contain 0 missing values.
 ```r
   by_day<-group_by(data, date)
   steps_by_day<-summarise(by_day,totalSteps=sum(steps,na.rm = TRUE))
-  p<-ggplot(data = steps_by_day,aes(x = date, y = totalSteps)) +
-      geom_bar(stat = "identity")
+  p<-ggplot(data = steps_by_day,aes(x = totalSteps)) +
+      geom_histogram(binwidth = 5000)+
+      labs(title = " Total Number of Steps Taken Per Day (NA filled)")+
+      theme(plot.title = element_text(colour = "blue"))
   print(p)
 ```
 
 ![](PA1_template_files/figure-html/q4_4-1.png)\
 
 ```r
-  steps_by_day<-summarise(by_day,meanSteps=mean(steps,na.rm = TRUE))
-  head(steps_by_day,n = 5)
+  mean2<-mean(steps_by_day$totalSteps)
+  median2<-median(steps_by_day$totalSteps)
 ```
-
-```
-## Source: local data frame [5 x 2]
-## 
-##         date meanSteps
-##       (date)     (dbl)
-## 1 2012-10-01  37.38260
-## 2 2012-10-02   0.43750
-## 3 2012-10-03  39.41667
-## 4 2012-10-04  42.06944
-## 5 2012-10-05  46.15972
-```
-
-```r
-  steps_by_day<-summarise(by_day,medianSteps=median(steps,na.rm = TRUE))
-  head(steps_by_day,n = 5)
-```
-
-```
-## Source: local data frame [5 x 2]
-## 
-##         date medianSteps
-##       (date)       (dbl)
-## 1 2012-10-01    34.11321
-## 2 2012-10-02     0.00000
-## 3 2012-10-03     0.00000
-## 4 2012-10-04     0.00000
-## 5 2012-10-05     0.00000
-```
-The values differ from the estimates from the first part of the assignment.
+####-mean of the total number of steps taken per day:1.0766189\times 10^{4}, differ: 0
+####-median of the total number of steps taken per day:10765, differ: 1.1886792
 
 ## Are there differences in activity patterns between weekdays and weekends?
 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend”
